@@ -10,13 +10,18 @@ class Main(object):
         pass
         self.jsonPath = r'./Jsons/'
         self.downloadPath = r'./Downloads/'
-        self.csvPath = r'./csv'
+        self.csvPath = r'./csv/'
         self.csvName = 'Medias.csv'
 
     def run(self):
+        media_contents = []
         for meida in self.getMediaObjs():
-            self.printMeidaContene(self.getContentFromMeida(meida))
-            print()
+            temp_content = self.getContentFromMeida(meida)
+            media_contents.append(temp_content)
+            self.saveContent2Csv(temp_content)
+
+
+            
 
     def getFileList(self):
         return os.listdir(self.jsonPath)
@@ -28,25 +33,38 @@ class Main(object):
                 mediaList.append(media)
         return mediaList
         
+    def downloadContent(self,content,filename):
+        try:
+            print("downloading:"+ videoURL + '\n as :'+ filename +'\n') 
+            urllib.request.urlretrieve(videoURL, self.downloadPath + filename)
+        except Exception as e:
+            print("Error occurred when downloading file from "+ videoURL + ", error message:")
+            print(e)
+
     def saveContent2Csv(self,content):
-        f = open(self.csvPath+self.csvName,'a',encoding='utf-8',newline="")
+        fullpath = self.csvPath + self.csvName
+        if(not os.path.exists(fullpath)):
+            f = open(fullpath,'a',encoding='UTF-8',newline="")
+            header = ['Author','Duration','Describtion', 'Likes', 'Share', 'Collection', 'Comment','URL']
+            csv_writer = csv.writer(f)
+            csv_writer.writerow(header)
+            f.close()
+        f = open(fullpath,'a',encoding='UTF-8',newline="")
         csv_writer = csv.writer(f)
-        #header = ['Author', 'Describtion', 'Duration', 'Likes', 'Share', 'Collection', 'Comment']
-        #csv_writer.writerow(header)
         line = self.getContentString(content)
         csv_writer.writerow(line)
         f.close()
 
     def getContentFromMeida(self,media):
         content = {}
-        content['duration'] = int(media.get('video').get('duration'))/1000.0      #视频时长
-        content['author'] = media.get('author').get('nickname')                   #作者昵称
-        content['desc'] = media.get('desc')                                       #视频描述
-        content['like'] = media.get('statistics').get('digg_count')               #点赞数
-        content['share'] = media.get('statistics').get('share_count')             #分享数
-        content['collect'] = media.get('statistics').get('collect_count')         #收藏数
-        content['comment'] = media.get('statistics').get('comment_count')         #评论数
-        content['url'] = media.get('video').get('play_addr').get('url_list')      #URL
+        content['duration'] = int(media.get('video').get('duration'))/1000.0       #视频时长
+        content['author']   = media.get('author').get('nickname')                  #作者昵称
+        content['desc']     = media.get('desc')                                    #视频描述
+        content['like']     = media.get('statistics').get('digg_count')            #点赞数
+        content['share']    = media.get('statistics').get('share_count')           #分享数
+        content['collect']  = media.get('statistics').get('collect_count')         #收藏数
+        content['comment']  = media.get('statistics').get('comment_count')         #评论数
+        content['url']      = media.get('video').get('play_addr').get('url_list')  #URL
         return content
 
     def getContentString(self,content):
