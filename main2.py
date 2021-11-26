@@ -29,8 +29,12 @@ class Main(object):
     def getMediaObjs(self):
         mediaList = []
         for file in self.getFileList():
-            for media in self.getMediaObj(self.jsonPath + file):
-                mediaList.append(media)
+            medias = self.getMediaObj(self.jsonPath + file)
+            if(len(medias) == 0):
+                pass
+            else:
+                for media in medias:
+                    mediaList.append(media)
         return mediaList
         
     def downloadContent(self,content,filename):
@@ -92,9 +96,13 @@ class Main(object):
         
 
     def getMediaObj(self,fileName):
-        myfile = codecs.open(fileName,'r','UTF-8')
+        myfile = codecs.open(fileName,'r','utf-8-sig')
         myJson=myfile.read()
-        myjson = json.loads(myJson)
+        try:
+            myjson = json.loads(myJson)
+        except Exception as e:
+            print("Error when parsing json:" + fileName)
+            return []
         return myjson.get('aweme_list')
 
 
