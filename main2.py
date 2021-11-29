@@ -5,12 +5,12 @@ import json
 import urllib
 import urllib.request
 
-class Main(object):
+class DouyinJsonAnalizer(object):
     def __init__(self):
         pass
-        self.jsonPath = r'./Jsons/'
-        self.downloadPath = r'./Downloads/'
-        self.csvPath = r'./csv/'
+        self.jsonPath = r'./Jsons/douyin'
+        self.downloadPath = r'./Downloads/douyin'
+        self.csvPath = r'./csv/douyin'
         self.csvName = 'Medias.csv'
 
     def run(self):
@@ -107,5 +107,5 @@ class Main(object):
 
 
 if __name__ == '__main__':
-    main = Main()
+    main = DouyinJsonAnalizer()
     main.run()
